@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mesonet Weather Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <img src="logo.png" alt="Weather Dashboard Logo" id="siteLogo" />
+      <h1>Mesonet Weather Dashboard</h1>
+    </div>
+    <div id="lastUpdated">Last Updated: --:--:--</div>
+  </header>
+
+  <main>
+    <section id="leftPanel">
+      <div class="bigTemp" id="tempValue">-- °F</div>
+      <div class="subInfo" id="pressureValue">Pressure: -- hPa</div>
+      <div class="subInfo" id="humidityValue">Humidity: -- %</div>
+    </section>
+
+    <section id="rightPanel">
+      <div class="card" id="windCard">
+        <div class="windRow">
+          <div>💨 Wind Speed: <span id="windSpeedValue">-- mph</span></div>
+          <div>🧭 Wind Direction: <span id="windDirValue">-- °</span></div>
+        </div>
+      </div>
+
+      <div class="card" id="liveTimeCard">
+        <div>🕒 Local Time: <span id="localTime">--:--:-- --</span></div>
+        <div>🌐 UTC Time: <span id="utcTime">--:--:-- UTC</span></div>
+      </div>
+    </section>
+  </main>
+
+  <section id="forecastSection">
+    <h2>5-Day Forecast</h2>
+    <div class="forecastContainer" id="forecast">Loading forecast...</div>
+  </section>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
