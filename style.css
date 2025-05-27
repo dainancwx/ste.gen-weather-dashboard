@@ -14,16 +14,15 @@ header {
   border-bottom: 1px solid #333;
 }
 
-/* ✅ New styles for logo */
-.logo-container {
+.logo-title {
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
 .site-logo {
+  width: 40px;
   height: 40px;
-  width: auto;
 }
 
 h1 {
@@ -128,7 +127,7 @@ main {
   flex-wrap: wrap;
   gap: 18px;
   margin-top: 10px;
-  justify-content: center;
+  justify-content: center; /* Center the forecast cards */
 }
 
 .forecast-slot {
@@ -137,14 +136,29 @@ main {
   padding: 10px;
   text-align: center;
   color: #ddd;
-  width: 135px;
+  width: 135px; /* Increased width */
   box-shadow: 0 0 6px rgba(0, 120, 255, 0.2);
-  white-space: nowrap;
-  flex-shrink: 0;
+  white-space: nowrap; /* Prevent line breaks */
+  flex-shrink: 0; /* Prevent shrinking in tight space */
 }
 
 .forecast-slot img {
   width: 50px;
   height: 50px;
   margin: 5px 0;
+}
+
+/* Footer watermark logo */
+footer.watermark {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0 20px;
+  opacity: 0.05;
+  pointer-events: none;
+}
+
+.watermark-logo {
+  max-width: 200px;
+  height: auto;
 }
