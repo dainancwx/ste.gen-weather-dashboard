@@ -184,7 +184,7 @@ footer.copyright {
 }
 
 .watermark {
-  position: fixed;
+  position: cem;
   bottom: 80px;
   right: 30px;
   opacity: 0.05;
