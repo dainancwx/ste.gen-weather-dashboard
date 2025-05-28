@@ -162,3 +162,11 @@ footer.watermark {
   max-width: 200px;
   height: auto;
 }
+footer.copyright {
+  text-align: center;
+  padding: 10px 0 30px;
+  color: #555;
+  font-size: 0.9rem;
+  font-family: monospace;
+  opacity: 0.4;
+}
