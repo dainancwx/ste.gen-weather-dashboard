@@ -162,6 +162,7 @@ footer.watermark {
   max-width: 200px;
   height: auto;
 }
+
 footer.copyright {
   text-align: center;
   padding: 10px 0 30px;
@@ -169,4 +170,46 @@ footer.copyright {
   font-size: 0.9rem;
   font-family: monospace;
   opacity: 0.4;
+}
+
+.logo-title {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+}
+
+.watermark {
+  position: fixed;
+  bottom: 80px;
+  right: 30px;
+  opacity: 0.05;
+  z-index: 0;
+}
+
+.watermark img {
+  width: 150px;
+  height: auto;
+}
+
+footer {
+  text-align: center;
+  padding: 15px;
+  font-size: 0.85rem;
+  color: #888;
+  background-color: #121212;
+  border-top: 1px solid #333;
+}
+
+.footer-credit a {
+  color: #59a6ff;
+  text-decoration: none;
+}
+
+.footer-credit a:hover {
+  text-decoration: underline;
 }
