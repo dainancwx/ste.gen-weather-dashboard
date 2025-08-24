@@ -5,49 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Weather Dashboard</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="logo.png">
 </head>
 <body>
   <header>
-    <div class="logo-title">
-      <img src="logo.png" alt="Site Logo" class="site-logo">
-      <h1>Weather Dashboard</h1>
-    </div>
-    <div id="lastUpdated">Last Updated: --</div>
+    <h1>Weather Dashboard</h1>
+    <p id="last-updated">Last Updated: --</p>
   </header>
 
-  <main>
-    <section id="leftPanel">
-      <div class="bigTemp" id="temperature">--°F</div>
-      <div class="subInfo" id="pressure">Pressure: -- hPa</div>
-      <div class="subInfo" id="humidity">Humidity: --%</div>
+  <main class="dashboard">
+    <section class="left-panel">
+      <h2 id="temperature">--°F</h2>
+      <p id="pressure">Pressure: -- hPa</p>
+      <p id="humidity">Humidity: --%</p>
     </section>
 
-    <section id="rightPanel">
-      <div class="card windRow">
-        <div>Wind Speed: <span id="windSpeed">-- mph</span></div>
-        <div>Wind Direction: <span id="windDir">--°</span></div>
-      </div>
-      <div class="card" id="liveTimeCard">
-        <div>Live Time: <span id="liveTime">--:--:--</span></div>
-      </div>
+    <section class="right-panel">
+      <p id="wind-speed">Wind Speed: -- mph</p>
+      <p id="wind-direction">Wind Direction: --°</p>
+      <p id="live-time">Time: --</p>
     </section>
   </main>
 
   <section id="forecastSection">
     <h2>5-Day Forecast</h2>
-    <div class="forecastContainer" id="forecastContainer"></div>
+    <div class="forecastContainer" id="forecast">Loading forecast...</div>
   </section>
 
-  <!-- 📡 Logia Weather Station (Wunderground) -->
-  <section id="logiaSection">
-    <h2>Logia Weather Station</h2>
-    <div id="logiaData">
-      Loading Wunderground data...
+  <!-- 🔽 NEW: Logia Weather Station Section -->
+  <section id="stationSection">
+    <h2>Local Station Data</h2>
+    <div id="station-data" class="station-box">Loading station data...</div>
+  </section>
+
+  <footer class="watermark">
+    <img src="logo.png" alt="Site Logo" class="watermark-logo">
+  </footer>
+
+  <footer>
+    <div class="footer-credit">
+      © 2025 Dainan Caywood | Weather Forecast Provided By: 
+      <a href="https://openweathermap.org/" target="_blank" rel="noopener">OpenWeatherMap</a> | 
+      Station Data: <a href="https://www.wunderground.com/" target="_blank" rel="noopener">Weather Underground</a>
     </div>
-  </section>
-
-  <footer class="copyright">
-    <div class="footer-credit">© 2025 Weather Dashboard | Powered by OpenWeather & Wunderground</div>
   </footer>
 
   <script src="dashboard.js"></script>
