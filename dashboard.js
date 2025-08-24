@@ -1,106 +1,111 @@
-// ---------------------
-// OpenWeather API Fetch
-// ---------------------
-async function fetchWeather() {
-    const apiKey = "f9c86aa8266a0d5c15d39ad5ca0b6c7e"; // replace with your OpenWeather API key
-    const city = "Columbia,MO,US"; // change to your city
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=imperial`;
+const API_KEY = "f9c86aa8266a0d5c15d39ad5ca0b6c7e";
+const LAT = 37.98110014147534;
+const LON = -90.05483401703698;
 
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
+async function fetchCurrentData() {
+  try {
+    const response = await fetch("datalog.csv");
+    const text = await response.text();
+    const rows = text.trim().split("\n");
+    const latest = rows[rows.length - 1].split(",");
 
-        document.getElementById("temperature").textContent = `${Math.round(data.main.temp)}°F`;
-        document.getElementById("pressure").textContent = `Pressure: ${data.main.pressure} hPa`;
-        document.getElementById("humidity").textContent = `Humidity: ${data.main.humidity}%`;
-        document.getElementById("wind-speed").textContent = `Wind Speed: ${data.wind.speed} mph`;
-        document.getElementById("wind-direction").textContent = `Wind Direction: ${data.wind.deg}°`;
-        document.getElementById("last-updated").textContent =
-            `Last Updated: ${new Date().toLocaleTimeString()}`;
-    } catch (err) {
-        console.error("Error fetching weather:", err);
-    }
+    const [_, windSpeed, windDir, hum, pressure, tempF] = latest;
+
+    document.getElementById("windSpeedValue").textContent = `${parseFloat(windSpeed).toFixed(1)} mph`;
+    document.getElementById("windDirValue").textContent = `${parseFloat(windDir).toFixed(1)} °`;
+    document.getElementById("tempValue").textContent = `${parseFloat(tempF).toFixed(1)} °F`;
+    document.getElementById("pressureValue").textContent = `Pressure: ${parseFloat(pressure).toFixed(1)} hPa`;
+    document.getElementById("humidityValue").textContent = `Humidity: ${parseFloat(hum).toFixed(1)} %`;
+
+    const now = new Date();
+    const ampm = now.getHours() >= 12 ? "PM" : "AM";
+    const hours = now.getHours() % 12 || 12;
+    const time = `${hours.toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")} ${ampm}`;
+    const date = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now.getDate().toString().padStart(2, "0")}`;
+    document.getElementById("lastUpdated").textContent = `Last Updated: ${date} ${time}`;
+  } catch (error) {
+    console.error("Error loading data:", error);
+  }
 }
 
-// ---------------------
-// 5-Day Forecast Fetch
-// ---------------------
+function updateLiveTime() {
+  const now = new Date();
+  const localHours = now.getHours() % 12 || 12;
+  const ampm = now.getHours() >= 12 ? "PM" : "AM";
+
+  const local = `${localHours.toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")} ${ampm}`;
+  const utc = `${now.getUTCHours().toString().padStart(2, "0")}:${now.getUTCMinutes().toString().padStart(2, "0")}:${now.getUTCSeconds().toString().padStart(2, "0")} UTC`;
+
+  document.getElementById("localTime").textContent = local;
+  document.getElementById("utcTime").textContent = utc;
+}
+
 async function fetchForecast() {
-    const apiKey = "f9c86aa8266a0d5c15d39ad5ca0b6c7e";
-    const city = "Columbia,MO,US";
-    const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=imperial`;
+  try {
+    const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${LAT}&lon=${LON}&units=imperial&appid=${API_KEY}`;
+    const res = await fetch(url);
+    const data = await res.json();
 
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        const forecastContainer = document.getElementById("forecast");
-        forecastContainer.innerHTML = "";
+    const container = document.getElementById("forecast");
+    container.innerHTML = "";
 
-        for (let i = 0; i < data.list.length; i += 8) {
-            const item = data.list[i];
-            const date = new Date(item.dt * 1000).toLocaleDateString();
-            const temp = Math.round(item.main.temp);
-            const desc = item.weather[0].description;
+    const daily = {};
+    data.list.forEach(item => {
+      const date = new Date(item.dt * 1000);
+      const dayKey = date.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+      if (!daily[dayKey]) daily[dayKey] = [];
+      daily[dayKey].push(item);
+    });
 
-            const card = document.createElement("div");
-            card.className = "forecast-card";
-            card.innerHTML = `
-                <h3>${date}</h3>
-                <p>${temp}°F</p>
-                <p>${desc}</p>
-            `;
-            forecastContainer.appendChild(card);
-        }
-    } catch (err) {
-        console.error("Error fetching forecast:", err);
-    }
-}
+    Object.keys(daily).slice(0, 5).forEach(day => {
+      const outer = document.createElement("div");
+      outer.className = "forecast-day-group";
 
-// ---------------------
-// Weather Underground Station Data
-// ---------------------
-async function fetchStationData() {
-    const stationId = "YOUR_STATION_ID"; // e.g. KMOCOLUMB34
-    const apiKey = "YOUR_WUNDERGROUND_API_KEY"; // Weather Underground PWS API Key
+      const title = document.createElement("h3");
+      title.textContent = day;
+      outer.appendChild(title);
 
-    const url = `https://api.weather.com/v2/pws/observations/current?stationId=${stationId}&format=json&units=e&apiKey=${apiKey}`;
+      const inner = document.createElement("div");
+      inner.className = "forecast-subcontainer";
 
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        const obs = data.observations[0];
+      daily[day].forEach(forecast => {
+        const date = new Date(forecast.dt * 1000);
+        const timeLabel = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
 
-        document.getElementById("station-data").innerHTML = `
-            <h3>${obs.stationID} - ${obs.neighborhood || "Local Station"}</h3>
-            <p>🌡️ Temp: ${obs.imperial.temp} °F</p>
-            <p>💧 Humidity: ${obs.humidity} %</p>
-            <p>💨 Wind: ${obs.imperial.windSpeed} mph (${obs.winddir}°)</p>
-            <p>📈 Pressure: ${obs.imperial.pressure} inHg</p>
+        const icon = `https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`;
+        const temp = Math.round(forecast.main.temp);
+        const windSpeed = forecast.wind.speed;
+        const windGust = forecast.wind.gust ?? "N/A";
+
+        const card = document.createElement("div");
+        card.className = "forecast-slot";
+        card.innerHTML = `
+          <div>${timeLabel}</div>
+          <img src="${icon}" alt="${forecast.weather[0].description}" />
+          <div>${temp} °F</div>
+          <div>💨 ${windSpeed.toFixed(1)} mph</div>
+          <div>༄ Gust: ${windGust !== "N/A" ? windGust.toFixed(1) : "N/A"} mph</div>
         `;
-    } catch (err) {
-        console.error("Station fetch error:", err);
-        document.getElementById("station-data").textContent = "Failed to load station data.";
-    }
+        inner.appendChild(card);
+      });
+
+      outer.appendChild(inner);
+      container.appendChild(outer);
+    });
+
+  } catch (err) {
+    console.error("Forecast error:", err);
+    document.getElementById("forecast").textContent = "Failed to load forecast.";
+  }
 }
 
-// ---------------------
-// Live Clock
-// ---------------------
-function updateTime() {
-    document.getElementById("live-time").textContent =
-        `Time: ${new Date().toLocaleTimeString()}`;
+async function updateDashboard() {
+  await fetchCurrentData();
+  updateLiveTime();
+  await fetchForecast();
 }
 
-// ---------------------
-// Refresh intervals
-// ---------------------
-setInterval(fetchWeather, 300000);     // refresh every 5 min
-setInterval(fetchForecast, 300000);
-setInterval(fetchStationData, 300000);
-setInterval(updateTime, 1000);
-
-// Initial load
-fetchWeather();
-fetchForecast();
-fetchStationData();
-updateTime();
+updateDashboard();
+setInterval(fetchCurrentData, 5000);
+setInterval(updateLiveTime, 1000);
+setInterval(fetchForecast, 100000);
