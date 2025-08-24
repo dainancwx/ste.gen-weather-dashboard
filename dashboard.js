@@ -2,7 +2,7 @@
 // OpenWeather API Fetch
 // ---------------------
 async function fetchWeather() {
-    const apiKey = "YOUR_OPENWEATHER_API_KEY"; // replace with your OpenWeather API key
+    const apiKey = "f9c86aa8266a0d5c15d39ad5ca0b6c7e"; // replace with your OpenWeather API key
     const city = "Columbia,MO,US"; // change to your city
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=imperial`;
 
