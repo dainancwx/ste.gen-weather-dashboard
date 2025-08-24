@@ -69,7 +69,7 @@
 
     async function fetchWundergroundData() {
       try {
-        const url = `https://api.weather.com/v2/pws/observations/current?stationId=${STATION_ID}&format=json&units=e&apiKey=${API_KEY}`;
+        const url = `https://api.weather.com/v2/pws/observations/current?stationId=${KMOSAINT578}&format=json&units=e&apiKey=${API_KEY}`;
         const res = await fetch(url);
         const data = await res.json();
 
@@ -90,7 +90,7 @@
 
     // Refresh WU data every 5 minutes
     fetchWundergroundData();
-    setInterval(fetchWundergroundData, 300000);
+    setInterval(fetchWundergroundData, 100000);
   </script>
 </body>
 </html>
