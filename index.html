@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Weather Dashboard</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -16,81 +17,39 @@
 
   <main>
     <section id="leftPanel">
-      <div id="temperature" class="bigTemp">--°F</div>
-      <div id="pressure" class="subInfo">Pressure: -- hPa</div>
-      <div id="humidity" class="subInfo">Humidity: --%</div>
+      <div class="bigTemp" id="temperature">--°F</div>
+      <div class="subInfo" id="pressure">Pressure: -- hPa</div>
+      <div class="subInfo" id="humidity">Humidity: --%</div>
     </section>
 
     <section id="rightPanel">
-      <div class="card">
-        <div class="windRow">
-          <div>Wind Speed: <span id="windSpeed">-- mph</span></div>
-          <div>Wind Dir: <span id="windDir">--°</span></div>
-        </div>
+      <div class="card windRow">
+        <div>Wind Speed: <span id="windSpeed">-- mph</span></div>
+        <div>Wind Direction: <span id="windDir">--°</span></div>
       </div>
-      <div id="liveTimeCard" class="card">
-        <div>Local Time: <span id="liveTime">--:--:--</span></div>
+      <div class="card" id="liveTimeCard">
+        <div>Live Time: <span id="liveTime">--:--:--</span></div>
       </div>
     </section>
   </main>
 
-  <!-- Forecast Section -->
   <section id="forecastSection">
-    <h2>5-Day Forecast (8-hour intervals)</h2>
+    <h2>5-Day Forecast</h2>
     <div class="forecastContainer" id="forecastContainer"></div>
   </section>
 
-  <!-- Wunderground Station Section -->
-  <section id="wundergroundSection">
-    <h2 style="text-align:center; color:#59a6ff;">Station Data (Logia - Wunderground)</h2>
-    <div class="card" style="max-width:600px; margin: 0 auto; text-align:center;">
-      <p><strong>Station:</strong> <span id="stationName">--</span></p>
-      <p><strong>Temp:</strong> <span id="stationTemp">--°F</span></p>
-      <p><strong>Humidity:</strong> <span id="stationHumidity">--%</span></p>
-      <p><strong>Pressure:</strong> <span id="stationPressure">-- hPa</span></p>
-      <p><strong>Wind:</strong> <span id="stationWind">-- mph</span></p>
-      <p><strong>Rain (Today):</strong> <span id="stationRain">-- in</span></p>
+  <!-- 📡 Logia Weather Station (Wunderground) -->
+  <section id="logiaSection">
+    <h2>Logia Weather Station</h2>
+    <div id="logiaData">
+      Loading Wunderground data...
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer>
-    <div class="footer-credit">
-      Weather data © <a href="https://openweathermap.org/">OpenWeather</a> & 
-      <a href="https://www.wunderground.com/">Weather Underground</a>
-    </div>
+  <footer class="copyright">
+    <div class="footer-credit">© 2025 Weather Dashboard | Powered by OpenWeather & Wunderground</div>
   </footer>
 
   <script src="dashboard.js"></script>
-  <script>
-    // Wunderground API Fetch
-    const STATION_ID = "YOUR_STATION_ID";   // <-- Replace with your Logia/WU station ID
-    const API_KEY = "YOUR_API_KEY";         // <-- Replace with your WU API key
-
-    async function fetchWundergroundData() {
-      try {
-        const url = `https://api.weather.com/v2/pws/observations/current?stationId=${KMOSAINT578}&format=json&units=e&apiKey=${API_KEY}`;
-        const res = await fetch(url);
-        const data = await res.json();
-
-        if (data && data.observations && data.observations.length > 0) {
-          const obs = data.observations[0];
-
-          document.getElementById("stationName").textContent = obs.stationID || "Unknown";
-          document.getElementById("stationTemp").textContent = obs.imperial.temp + "°F";
-          document.getElementById("stationHumidity").textContent = obs.humidity + "%";
-          document.getElementById("stationPressure").textContent = obs.imperial.pressure + " hPa";
-          document.getElementById("stationWind").textContent = obs.imperial.windspeed + " mph";
-          document.getElementById("stationRain").textContent = obs.imperial.precipTotal + " in";
-        }
-      } catch (err) {
-        console.error("WU fetch error:", err);
-      }
-    }
-
-    // Refresh WU data every 5 minutes
-    fetchWundergroundData();
-    setInterval(fetchWundergroundData, 100000);
-  </script>
 </body>
 </html>
