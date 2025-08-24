@@ -26,7 +26,7 @@ async function fetchWeather() {
 // 5-Day Forecast Fetch
 // ---------------------
 async function fetchForecast() {
-    const apiKey = "YOUR_OPENWEATHER_API_KEY";
+    const apiKey = "f9c86aa8266a0d5c15d39ad5ca0b6c7e";
     const city = "Columbia,MO,US";
     const url = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=imperial`;
 
