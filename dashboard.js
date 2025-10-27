@@ -58,20 +58,9 @@ async function fetchForecast() {
     });
 
     Object.keys(daily).slice(0, 5).forEach(day => {
-      const outer = document.createElement("div");
-      outer.className = "forecast-day-group";
-
-      const title = document.createElement("h3");
-      title.textContent = day;
-      outer.appendChild(title);
-
-      const inner = document.createElement("div");
-      inner.className = "forecast-subcontainer";
-
       daily[day].forEach(forecast => {
         const date = new Date(forecast.dt * 1000);
         const timeLabel = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
-
         const icon = `https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`;
         const temp = Math.round(forecast.main.temp);
         const windSpeed = forecast.wind.speed;
@@ -80,19 +69,16 @@ async function fetchForecast() {
         const card = document.createElement("div");
         card.className = "forecast-slot";
         card.innerHTML = `
+          <div>${day}</div>
           <div>${timeLabel}</div>
           <img src="${icon}" alt="${forecast.weather[0].description}" />
           <div>${temp} °F</div>
           <div>💨 ${windSpeed.toFixed(1)} mph</div>
-          <div>༄ Gust: ${windGust !== "N/A" ? windGust.toFixed(1) : "N/A"} mph</div>
+          <div>🌬 Gust: ${windGust !== "N/A" ? windGust.toFixed(1) : "N/A"} mph</div>
         `;
-        inner.appendChild(card);
+        container.appendChild(card);
       });
-
-      outer.appendChild(inner);
-      container.appendChild(outer);
     });
-
   } catch (err) {
     console.error("Forecast error:", err);
     document.getElementById("forecast").textContent = "Failed to load forecast.";
