@@ -1,97 +1,61 @@
-const API_KEY = "f9c86aa8266a0d5c15d39ad5ca0b6c7e";
+/* dashboard.js
+   Replaces previous JS. Reads datalog.csv for current station values,
+   fetches OpenWeather 5-day forecast, and renders forecast cards
+   into #forecast inside #forecastContainer.
+*/
+
+const API_KEY = "f9c86aa8266a0d5c15d39ad5ca0b6c7e"; // <-- replace if needed
 const LAT = 37.98110014147534;
 const LON = -90.05483401703698;
+const DATALOG_PATH = "datalog.csv"; // keep in same dir
 
+// DOM refs
+const elTemp = document.getElementById("tempValue");
+const elHumidity = document.getElementById("humidityValue");
+const elPressure = document.getElementById("pressureValue");
+const elWind = document.getElementById("windValue");
+const elWindDir = document.getElementById("windDirValue");
+const elLastUpdated = document.getElementById("lastUpdated");
+const forecastContainer = document.getElementById("forecast");
+const forecastWrapper = document.getElementById("forecastContainer");
+
+// Safety: fallback refs in case IDs differ
+if (!elTemp || !elHumidity || !elPressure || !elWind || !elWindDir || !elLastUpdated || !forecastContainer || !forecastWrapper) {
+  console.error("One or more required DOM elements were not found. Check element IDs in HTML.");
+}
+
+// Make forecast area scrollable vertically after wrapping
+// Limit height so first row + second row are visible and then scrollbar appears
+forecastWrapper.style.maxHeight = "320px";
+forecastWrapper.style.overflowX = "auto";
+forecastWrapper.style.overflowY = "auto";
+forecastWrapper.style.padding = "8px";
+forecastContainer.style.display = "flex";
+forecastContainer.style.flexWrap = "wrap";
+forecastContainer.style.gap = "10px";
+
+/* -------------------- Current data from datalog.csv -------------------- */
 async function fetchCurrentData() {
   try {
-    const response = await fetch("datalog.csv");
-    const text = await response.text();
-    const rows = text.trim().split("\n");
-    const latest = rows[rows.length - 1].split(",");
+    const res = await fetch(DATALOG_PATH, { cache: "no-store" });
+    if (!res.ok) throw new Error("datalog.csv fetch failed: " + res.status);
+    const text = await res.text();
+    const rows = text.trim().split("\n").filter(Boolean);
+    if (rows.length === 0) throw new Error("datalog.csv is empty");
 
-    const [_, windSpeed, windDir, hum, pressure, tempF] = latest;
+    const latest = rows[rows.length - 1].split(",").map(s => s.trim());
+    // Your CSV column order from earlier: [timestamp?, windSpeed, windDir, hum, pressure, tempF]
+    // Adjust indices here if your CSV layout differs.
+    const windSpeed = parseFloat(latest[1]);
+    const windDir = parseFloat(latest[2]);
+    const hum = parseFloat(latest[3]);
+    const pressure = parseFloat(latest[4]);
+    const tempF = parseFloat(latest[5]);
 
-    document.getElementById("windSpeedValue").textContent = `${parseFloat(windSpeed).toFixed(1)} mph`;
-    document.getElementById("windDirValue").textContent = `${parseFloat(windDir).toFixed(1)} °`;
-    document.getElementById("tempValue").textContent = `${parseFloat(tempF).toFixed(1)} °F`;
-    document.getElementById("pressureValue").textContent = `Pressure: ${parseFloat(pressure).toFixed(1)} hPa`;
-    document.getElementById("humidityValue").textContent = `Humidity: ${parseFloat(hum).toFixed(1)} %`;
-
-    const now = new Date();
-    const ampm = now.getHours() >= 12 ? "PM" : "AM";
-    const hours = now.getHours() % 12 || 12;
-    const time = `${hours.toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")} ${ampm}`;
-    const date = `${now.getFullYear()}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now.getDate().toString().padStart(2, "0")}`;
-    document.getElementById("lastUpdated").textContent = `Last Updated: ${date} ${time}`;
-  } catch (error) {
-    console.error("Error loading data:", error);
-  }
-}
-
-function updateLiveTime() {
-  const now = new Date();
-  const localHours = now.getHours() % 12 || 12;
-  const ampm = now.getHours() >= 12 ? "PM" : "AM";
-
-  const local = `${localHours.toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")} ${ampm}`;
-  const utc = `${now.getUTCHours().toString().padStart(2, "0")}:${now.getUTCMinutes().toString().padStart(2, "0")}:${now.getUTCSeconds().toString().padStart(2, "0")} UTC`;
-
-  document.getElementById("localTime").textContent = local;
-  document.getElementById("utcTime").textContent = utc;
-}
-
-async function fetchForecast() {
-  try {
-    const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${LAT}&lon=${LON}&units=imperial&appid=${API_KEY}`;
-    const res = await fetch(url);
-    const data = await res.json();
-
-    const container = document.getElementById("forecast");
-    container.innerHTML = "";
-
-    const daily = {};
-    data.list.forEach(item => {
-      const date = new Date(item.dt * 1000);
-      const dayKey = date.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
-      if (!daily[dayKey]) daily[dayKey] = [];
-      daily[dayKey].push(item);
-    });
-
-    Object.keys(daily).slice(0, 5).forEach(day => {
-      daily[day].forEach(forecast => {
-        const date = new Date(forecast.dt * 1000);
-        const timeLabel = date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
-        const icon = `https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png`;
-        const temp = Math.round(forecast.main.temp);
-        const windSpeed = forecast.wind.speed;
-        const windGust = forecast.wind.gust ?? "N/A";
-
-        const card = document.createElement("div");
-        card.className = "forecast-slot";
-        card.innerHTML = `
-          <div>${day}</div>
-          <div>${timeLabel}</div>
-          <img src="${icon}" alt="${forecast.weather[0].description}" />
-          <div>${temp} °F</div>
-          <div>💨 ${windSpeed.toFixed(1)} mph</div>
-          <div>🌬 Gust: ${windGust !== "N/A" ? windGust.toFixed(1) : "N/A"} mph</div>
-        `;
-        container.appendChild(card);
-      });
-    });
-  } catch (err) {
-    console.error("Forecast error:", err);
-    document.getElementById("forecast").textContent = "Failed to load forecast.";
-  }
-}
-
-async function updateDashboard() {
-  await fetchCurrentData();
-  updateLiveTime();
-  await fetchForecast();
-}
-
-updateDashboard();
-setInterval(fetchCurrentData, 5000);
-setInterval(updateLiveTime, 1000);
-setInterval(fetchForecast, 100000);
+    if (!Number.isNaN(tempF)) elTemp.textContent = `${tempF.toFixed(1)} °F`;
+    if (!Number.isNaN(hum)) elHumidity.textContent = `${hum.toFixed(1)} %`;
+    if (!Number.isNaN(pressure)) {
+      // User originally showed hPa — but UI uses inHg sometimes. Keep hPa as earlier; convert if desired.
+      elPressure.textContent = `Pressure: ${pressure.toFixed(1)} hPa`;
+    }
+    if (!Number.isNaN(windSpeed)) elWind.textContent = `${windS
