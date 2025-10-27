@@ -5,62 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ste. Genevieve Weather Dashboard</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" type="image/png" href="logo.png" />
+  <script src="dashboard.js" defer></script>
 </head>
 <body>
   <header>
-    <div class="logo-title">
-      <img src="logo.png" alt="Logo" class="site-logo" />
+    <div class="logo-section">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/MESONET_logo.svg/1200px-MESONET_logo.svg.png" alt="Logo" class="logo">
       <h1>Ste. Genevieve Weather Dashboard</h1>
     </div>
-    <div id="lastUpdated">Last Updated: --:--:--</div>
+    <div id="lastUpdated">Last Updated: --</div>
   </header>
 
   <main class="dashboard-layout">
-    <!-- Centered Camera View -->
     <section id="cameraView">
-      <iframe 
-        src="YOUR_CAMERA_STREAM_URL" 
-        allowfullscreen 
-        frameborder="0">
-      </iframe>
+      <!-- Replace with your actual camera stream -->
+      <iframe src="https://hazcams.com/embed/YOUR_CAMERA_ID" allowfullscreen></iframe>
     </section>
 
-    <!-- Right-hand Data Panel -->
     <aside id="dataPanel">
-      <div class="bigTemp" id="tempValue">-- °F</div>
-      <div class="subInfo" id="pressureValue">Pressure: -- hPa</div>
-      <div class="subInfo" id="humidityValue">Humidity: -- %</div>
-
-      <div class="card">
-        <div>💨 Wind Speed: <span id="windSpeedValue">-- mph</span></div>
-        <div>🧭 Wind Direction: <span id="windDirValue">-- °</span></div>
-      </div>
-
-      <div class="card">
-        <div>🕒 Local Time: <span id="localTime">--:--:-- --</span></div>
-        <div>🌐 UTC Time: <span id="utcTime">--:--:-- UTC</span></div>
-      </div>
+      <div class="data-card"><h2>Temperature</h2><p id="tempValue">-- °F</p></div>
+      <div class="data-card"><h2>Humidity</h2><p id="humidityValue">-- %</p></div>
+      <div class="data-card"><h2>Pressure</h2><p id="pressureValue">-- inHg</p></div>
+      <div class="data-card"><h2>Wind</h2><p id="windValue">-- mph</p></div>
+      <div class="data-card"><h2>Direction</h2><p id="windDirValue">--°</p></div>
     </aside>
 
-    <!-- Bottom Section (Forecast + Radar) -->
     <footer id="bottomSection">
-      <div class="forecastContainer" id="forecast">Loading forecast...</div>
-      <div class="radarBox">
-        <iframe 
-          src="https://www.rainviewer.com/map.html?loc=37.981,-90.054,8" 
-          allowfullscreen 
-          frameborder="0">
-        </iframe>
+      <div id="forecastContainer">
+        <div id="forecast"></div>
+      </div>
+      <div id="radarBox">
+        <iframe src="https://www.rainviewer.com/map.html?loc=37.981,-90.054,8" allowfullscreen></iframe>
       </div>
     </footer>
   </main>
-
-  <footer class="footer-credit">
-    © 2025 Dainan Caywood | Weather Data from 
-    <a href="https://openweathermap.org/" target="_blank" rel="noopener">OpenWeatherMap</a>
-  </footer>
-
-  <script src="dashboard.js"></script>
 </body>
 </html>
